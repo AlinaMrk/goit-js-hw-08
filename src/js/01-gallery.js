@@ -4,31 +4,32 @@ import { galleryItems } from './gallery-items';
 
 const galleryRef = document.querySelector('.gallery');
 
-const createGallaryItem=({preview,original,description})=>{
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML=`
-    <div class="gallery__item">
-      <a class="gallery__link" href="${original}">
-        <img
-          class="gallery__image"
-          src="${preview}"
-          data-source="${original}"
-          alt="${description}"
-        />
-      </a>
-    </div>`
-    return wrapper.firstElementChild;
+function createGalleryMarkup() {
+  const galleryGrid = galleryItems
+    .map(({ preview, original, description }) => {
+      return `
+           <li class="gallery__item " style="list-style: none;">
+        <a  href="${original}">
+          <img
+            class="gallery__image"
+            src="${preview}"
+            alt="${description}"
+            title="${description}"
+          />
+        </a>
+      </li>`;
+    })
+    .join('');
 
-}
-const clearGallary = (ref) => {
-ref.innerHTML = '';
-};
-const renderGallaryItems=(items, ref)=>{
-clearGallary(ref);
-const gallaryCard = items.map((item) => createGallaryItem(item));
-ref.append(...gallaryCard);
+  refs.gallery.insertAdjacentHTML('afterbegin', galleryGrid);
 }
 
+createGalleryMarkup();
 
-renderGallaryItems(galleryItems, galleryRef);
-const lightbox =  new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250, captionPosition: 'bottom'});
+new SimpleLightbox('.gallery a', {
+  captionDelay: 250,
+});
+
+// Change code below this line
+
+console.log(galleryItems);

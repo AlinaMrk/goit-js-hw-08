@@ -1,40 +1,47 @@
 import throttle from 'lodash.throttle';
 
-const formMessageRef = document.querySelector('.feedback-form'),
-      inputEl = document.querySelector('.feedback-form input'),
-      commentEl = document.querySelector('.feedback-form textarea');
+const form = document.querySelector('.feedback-form');
+const input = document.querySelector('input');
+const comment= document.querySelector('textarea');
 
-const LOCALSTORAGE_KEY = 'feedback-form-state';
+const STORAGE_KEY = 'feedback-form-state';
 
-const fomrSubmitHandler =(e)=>{
-    e.preventDefault();
-    const enteredData =new FormData (e.currentTarget);
-    enteredData.forEach((value, name)=>{
-        console.log(`${name}: ${value}`);
-    })
-    e.currentTarget.reset();
-    localStorage.removeItem(LOCALSTORAGE_KEY);
-    
-}
-const formInputHandler=()=>{
-    const enteredFormData = {
-        email: inputEl.value,
-        message: commentEl.value,
-      };
-    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(enteredFormData));   
-}
-
-function showPreviosDataForm() {
-    const messageObj = localStorage.getItem(LOCALSTORAGE_KEY)
-    const message = JSON.parse(messageObj);
-    if(message) {
-        inputEl.value = message.email || '';
-        commentEl.value = message.message || '';
-    }
+const formData = {};
+const refs = {
+    form: document.querySelector('.feedback-form'),
+    input: document.querySelector('.feedback-form input'),
+    textarea: document.querySelector('.feedback-form textarea'),
 };
+refs.form.addEventListener('submit', onFormSubmit);
+refs.form.addEventListener('input', throttle(onTextareaChange, 500));
 
+populateTextarea();
 
-formMessageRef.addEventListener('submit',fomrSubmitHandler);
-formMessageRef.addEventListener('input', throttle(formInputHandler, 500));
-
-showPreviosDataForm();
+function onFormSubmit(event) {
+    event.preventDefault(); 
+    formData[event.target.name] = event.target.value;
+    console.log(formData); 
+    handleClearText();
+}
+function handleClearText() {
+    refs.form.reset();
+    localStorage.removeItem(STORAGE_KEY);
+    formData = {};
+}
+function onTextareaChange(event) {
+    formData [event.target.name] = event.target.value;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+    console.log(formData);
+};
+function populateTextarea() {
+    let savedMessage = localStorage.getItem(STORAGE_KEY)
+    if (savedMessage) {
+        savedMessage = JSON.parse(savedMessage);
+        console.log(savedMessage);
+        Object.entries(savedMessage).forEach(([key, value]) => {
+            formData[key] = value;
+            refs.form.elements[key].value = value;
+        });
+        
+    }
+}
