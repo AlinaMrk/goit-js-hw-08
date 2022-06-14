@@ -23,4 +23,3 @@ function createGalleryMarkup(galleryItems) {
 let lightbox = new SimpleLightbox('.gallery__item', {captionsData: 'alt', captionDelay: 250, });
 lightbox.on('show.simplelightbox', function () { });
 
-
