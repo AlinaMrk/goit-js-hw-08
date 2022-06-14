@@ -1,35 +1,28 @@
-import SimpleLightbox from "simplelightbox";
-import 'simplelightbox/dist/simple-lightbox.min.css';
+
 import { galleryItems } from './gallery-items';
 
-const galleryRef = document.querySelector('.gallery');
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-function createGalleryMarkup() {
-  const galleryGrid = galleryItems
-    .map(({ preview, original, description }) => {
-      return `
-           <li class="gallery__item " style="list-style: none;">
-        <a  href="${original}">
-          <img
-            class="gallery__image"
-            src="${preview}"
-            alt="${description}"
-            title="${description}"
-          />
-        </a>
-      </li>`;
-    })
-    .join('');
+const galleryList = document.querySelector('.gallery')
 
-  refs.gallery.insertAdjacentHTML('afterbegin', galleryGrid);
-}
 
-createGalleryMarkup();
+    const addGallery = (imgArray) => {
+    return imgArray.map(({ preview, description, original }) => {
+        return `
+        <div class="gallery__item">
+            <a class="gallery__link" href=${original}>
+                <img src=${preview} title=${description}  alt=${description}  data-source=${original} class="gallery__image">
+            </a>
+        </div>`;
+    }).join('')
+    }
 
-new SimpleLightbox('.gallery a', {
-  captionDelay: 250,
+    let cardSet = addGallery(galleryItems)
+    galleryList.insertAdjacentHTML('afterbegin',cardSet )
+    
+    let lightbox = new SimpleLightbox('.gallery a', {
+    
+    overlay: true,
+    captionDelay: '250ms'
 });
-
-// Change code below this line
-
-console.log(galleryItems);
