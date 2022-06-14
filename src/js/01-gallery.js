@@ -1,11 +1,9 @@
 
+import SimpleLightbox from "simplelightbox";
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import { galleryItems } from './gallery-items';
 
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-
 const galleryList = document.querySelector('.gallery')
-
 
     const addGallery = (imgArray) => {
     return imgArray.map(({ preview, description, original }) => {
