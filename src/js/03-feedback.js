@@ -1,47 +1,48 @@
-import throttle from 'lodash.throttle';
+import throttle from 'lodash/throttle';
 
 const form = document.querySelector('.feedback-form');
-const input = document.querySelector('input');
-const comment= document.querySelector('textarea');
 
-const STORAGE_KEY = 'feedback-form-state';
+const LOCAL_KEY = 'feedback-form-state';
 
-const formData = {};
-const refs = {
-    form: document.querySelector('.feedback-form'),
-    input: document.querySelector('.feedback-form input'),
-    textarea: document.querySelector('.feedback-form textarea'),
+addLocalData();
+
+const formValues = {
+  email: form.email.value,
+  message: form.message.value,
 };
-refs.form.addEventListener('submit', onFormSubmit);
-refs.form.addEventListener('input', throttle(onTextareaChange, 500));
 
-populateTextarea();
+form.addEventListener('input', throttle(onFormInput, 500));
+form.addEventListener('submit', onFormSubmit);
+
+function onFormInput({ target: { name, value } }) {
+  formValues[name] = value;
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(formValues));
+}
 
 function onFormSubmit(event) {
-    event.preventDefault(); 
-    formData[event.target.name] = event.target.value;
-    console.log(formData); 
-    handleClearText();
+  event.preventDefault();
+
+  const submittedData = {
+    email: event.currentTarget.email.value,
+    message: event.currentTarget.message.value,
+  };
+
+  if (submittedData.email === '' || submittedData.message === '') {
+    alert('Please fill all fields!');
+    return;
+  }
+
+  console.log(submittedData);
+
+  localStorage.removeItem(LOCAL_KEY);
+  form.reset();
 }
-function handleClearText() {
-    refs.form.reset();
-    localStorage.removeItem(STORAGE_KEY);
-    formData = {};
-}
-function onTextareaChange(event) {
-    formData [event.target.name] = event.target.value;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
-    console.log(formData);
-};
-function populateTextarea() {
-    let savedMessage = localStorage.getItem(STORAGE_KEY)
-    if (savedMessage) {
-        savedMessage = JSON.parse(savedMessage);
-        console.log(savedMessage);
-        Object.entries(savedMessage).forEach(([key, value]) => {
-            formData[key] = value;
-            refs.form.elements[key].value = value;
-        });
-        
-    }
+
+function addLocalData() {
+  const localData = JSON.parse(localStorage.getItem(LOCAL_KEY));
+
+  if (!localData) return;
+
+  if (localData.email) form.email.value = localData.email;
+  if (localData.message) form.message.value = localData.message;
 }
